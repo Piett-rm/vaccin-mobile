@@ -1,0 +1,10 @@
+{
+  "expo": {
+    "name": "vaccin-mobile",
+    "slug": "vaccin-mobile",
+    "version": "1.0.0",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  }
+}
