@@ -3,6 +3,7 @@ import { View, Text, Button } from 'react-native'
 import { NavigationContainer } from '@react-navigation/native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import authAPI from '../model/authAPI'
+import PatientsPage from './PatientsPage'
 
 const login = () => {
   const toto = authAPI.authentificate({
@@ -18,9 +19,22 @@ function HomeScreen({ navigation }) {
       <Text>Home Screen</Text>
       {/* <Button title="login request" onPress={() => console.log(login())} /> */}
       <Button
-        title="Go to Details"
+        title="Go to Patient"
         onPress={() =>
-          navigation.navigate('Details', { itemId: 16, otherParam: 'Cheese' })
+          navigation.navigate('Patients', { itemId: 16, otherParam: 'Cheese' })
+        }
+      />
+      <Button
+        title="test login request"
+        onPress={() =>
+          console.log(
+            authAPI
+              .authentificate({
+                username: 'martine39@auger.com',
+                password: 'Epsi.123',
+              })
+              .then((result) => console.log(result))
+          )
         }
       />
     </View>
@@ -69,12 +83,7 @@ const App = () => {
             },
           }}
         />
-        {/* <Stack.Screen
-          name="Profile"
-          component={ProfileScreen}
-          options={({ route }) => ({ title: route.params.name })}
-        /> */}
-        <Stack.Screen name="Details" component={DetailsScreen} />
+        <Stack.Screen name="Patients" component={PatientsPage} />
       </Stack.Navigator>
     </NavigationContainer>
   )
