@@ -1,15 +1,15 @@
 import axios from 'axios'
 import { server_address, server_port } from '@env'
 
-async function GetPatients() {
+async function GetInfirmiers() {
   //return Patients
   return await axios
-    .get(`${server_address}:${server_port}/api/patients`)
+    .get(`${server_address}:${server_port}/api/infirmiers`)
     .then((response) => response.data)
     .catch((err) => {
       console.error(err)
     })
 }
 export default {
-  GetPatients,
+    GetInfirmiers,
 }

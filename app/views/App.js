@@ -1,4 +1,5 @@
 import * as React from 'react'
+import { useEffect } from 'react'
 import {
   StyleSheet,
   Text,
@@ -12,6 +13,8 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { StatusBar } from 'expo-status-bar'
 import authAPI from '../model/authAPI'
 import PatientsPage from './PatientsPage'
+import InfirmiersPage from './InfirmiersPage'
+import axios from 'axios'
 
 const Stack = createNativeStackNavigator()
 
@@ -19,44 +22,93 @@ const App = () => {
   const [jwt, setJwt] = React.useState(null)
 
   function HomeScreen({ navigation }) {
+    useEffect(() => {
+      axios.defaults.headers.common['Authorization'] = 'Bearer ' + jwt
+      //si il y a changement dans jwt
+    }, [jwt])
+
     return (
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-        <Text>Home Screen</Text>
-        <Button
-          title="Go to Patient"
-          onPress={() =>
-            navigation.navigate('Patients', {
-              itemId: 16,
-              otherParam: 'Cheese',
-            })
-          }
-        />
-        <Button
+      <View style={stylesHomePage.container}>
+        <View style={stylesHomePage.headers}>
+          <Text style={stylesHomePage.titre}>Gestion des vaccins</Text>
+        </View>
+        <View style={stylesHomePage.text}>
+          <Button
+            title="Go to Patient"
+            onPress={() =>
+              navigation.navigate('Patients', {
+                itemId: 16,
+                otherParam: 'Cheese',
+              })
+            }
+          />
+          <Button
           title="Go to Login"
           onPress={() => navigation.navigate('Login')}
         />
         <Button title="Show Jwt" onPress={() => console.log(jwt)} />
+        </View>
+
+        
       </View>
     )
   }
 
+  const stylesHomePage = StyleSheet.create({
+    container: {
+      height: 100,
+      padding: 20,
+      flex: 1,
+      flexDirection: "column"
+    },
+    headers: {
+      flex: 1,
+      height: 15,
+    },
+    titre: {
+      fontSize: 100,
+    },
+    text: {
+      flex: 2,
+    }
+  })
+
   const LoginPage = ({ navigation }) => {
     const [email, setEmail] = React.useState('')
     const [password, setPassword] = React.useState('')
-
+    console.log(axios.defaults.headers.common)
     const login = () => {
       try {
         return authAPI
           .authentificate({
-            username: 'martine39@auger.com',
-            password: 'Epsi.123',
+            username: email,
+            password: password,
           })
           .then((result) => setJwt(result))
+          .then(console.log('test'))
           .then((result) => console.log(result))
-          .then((axios.defaults.headers['Authorization'] = 'Bearer ' + jwt))
-          .catch((Error) => Error)
-      } catch {
-        return `error`
+      } catch (error) {
+        // Error 😨
+        if (error.response) {
+          /*
+           * The request was made and the server responded with a
+           * status code that falls out of the range of 2xx
+           */
+          console.log(error.response.data)
+          console.log(error.response.status)
+          console.log(error.response.headers)
+        } else if (error.request) {
+          /*
+           * The request was made but no response was received, `error.request`
+           * is an instance of XMLHttpRequest in the browser and an instance
+           * of http.ClientRequest in Node.js
+           */
+          console.log(error.request)
+        } else {
+          // Something happened in setting up the request and triggered an Error
+          console.log('Error', error.message)
+        }
+        console.log(error)
       }
     }
 
@@ -95,7 +147,7 @@ const App = () => {
       },
 
       loginBtn: {
-        width: '80%',
+        width: '20%',
         borderRadius: 25,
         height: 50,
         alignItems: 'center',
@@ -133,7 +185,6 @@ const App = () => {
         >
           <Text style={styles.loginText}>LOGIN</Text>
         </TouchableOpacity>
-        <Button title="Show Jwt" onPress={() => console.log(jwt)} />
       </View>
     )
   }
@@ -156,6 +207,7 @@ const App = () => {
           }}
         />
         <Stack.Screen name="Patients" component={PatientsPage} />
+        <Stack.Screen name="Infirmiers" component={InfirmiersPage} />
       </Stack.Navigator>
     </NavigationContainer>
   )
