@@ -59,13 +59,18 @@ export default function InfirmiersPage({ navigation, route }) {
                 </DataTable.Header>
     
                 {AllInfirmiers.filter(OneInfirmier => OneInfirmier.service.id === 32).slice(page * perPage, page * perPage + perPage).map(
+                  
                   (OneInfirmier) => (
+                    <>
+                    {OneInfirmier.prenom.startsWith(search) &&
+
                     <DataTable.Row key={OneInfirmier.id}>
                       <DataTable.Cell>{OneInfirmier.nom}</DataTable.Cell>
                       <DataTable.Cell>{OneInfirmier.prenom}</DataTable.Cell>
                       <DataTable.Cell>
                       </DataTable.Cell>
-                    </DataTable.Row>
+                    </DataTable.Row>}
+                    </>
                   )
                 )}
                 <DataTable.Pagination

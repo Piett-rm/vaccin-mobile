@@ -25,16 +25,6 @@ export default function PatientsPage({ navigation }) {
   useEffect(() => {
     console.log(search)
   }, [search])
-  // useEffect(() => {
-  //   console.log('test')
-
-  //   //console.log(perPage)
-  //   //setNbrPage(AllPatients.lenght / perPage)
-  //   console.log('All Patients')
-  //   console.log(AllPatients)
-
-  //   //si il y a changement dans allPatients
-  // }, [AllPatients])
 
 
 
@@ -70,8 +60,10 @@ export default function PatientsPage({ navigation }) {
               <DataTable.Title>Rendez vous</DataTable.Title>
             </DataTable.Header>
 
-            {AllPatients.slice(page * perPage, page * perPage + perPage).map(
+            {AllPatients.map(
               (OnePatient) => (
+                <>
+                {(OnePatient.prenom.startsWith(search) || OnePatient.nom.startsWith(search) || OnePatient.numeroSecuriteSociale.toString().startsWith(search))  &&
                 <DataTable.Row key={OnePatient.id}>
                   <DataTable.Cell>{OnePatient.nom}</DataTable.Cell>
                   <DataTable.Cell>{OnePatient.prenom}</DataTable.Cell>
@@ -86,9 +78,10 @@ export default function PatientsPage({ navigation }) {
                       })}
                     />
                   </DataTable.Cell>
-                </DataTable.Row>
+                </DataTable.Row>}
+                </>
               )
-            )}
+            ).slice(page * perPage, page * perPage + perPage)}
             <DataTable.Pagination
               page={page}
               //

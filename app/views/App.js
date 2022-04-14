@@ -24,6 +24,10 @@ const App = () => {
   function HomeScreen({ navigation }) {
     useEffect(() => {
       axios.defaults.headers.common['Authorization'] = 'Bearer ' + jwt
+      if (!jwt) {
+        delete axios.defaults.headers.common['Authorization']
+        navigation.navigate('Login')
+      }
       //si il y a changement dans jwt
     }, [jwt])
 
@@ -35,21 +39,11 @@ const App = () => {
         <View style={stylesHomePage.text}>
           <Button
             title="Go to Patient"
-            onPress={() =>
-              navigation.navigate('Patients', {
-                itemId: 16,
-                otherParam: 'Cheese',
-              })
-            }
+            onPress={() => navigation.navigate('Patients')}
           />
-          <Button
-          title="Go to Login"
-          onPress={() => navigation.navigate('Login')}
-        />
-        <Button title="Show Jwt" onPress={() => console.log(jwt)} />
+          <Button title="Deconnexion" onPress={() => setJwt(null)} />
+          <Button title="Show Jwt" onPress={() => console.log(jwt)} />
         </View>
-
-        
       </View>
     )
   }
@@ -59,7 +53,7 @@ const App = () => {
       height: 100,
       padding: 20,
       flex: 1,
-      flexDirection: "column"
+      flexDirection: 'column',
     },
     headers: {
       flex: 1,
@@ -70,7 +64,7 @@ const App = () => {
     },
     text: {
       flex: 2,
-    }
+    },
   })
 
   const LoginPage = ({ navigation }) => {
@@ -163,7 +157,7 @@ const App = () => {
         <View style={styles.inputView}>
           <TextInput
             style={styles.TextInput}
-            placeholder="Email."
+            placeholder="Email"
             placeholderTextColor="#000000"
             onChangeText={(email) => setEmail(email)}
           />
@@ -172,7 +166,7 @@ const App = () => {
         <View style={styles.inputView}>
           <TextInput
             style={styles.TextInput}
-            placeholder="Password."
+            placeholder="Password"
             placeholderTextColor="#000000"
             secureTextEntry={true}
             onChangeText={(password) => setPassword(password)}
