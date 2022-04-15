@@ -10,6 +10,16 @@ async function GetInfirmiers() {
       console.error(err)
     })
 }
+
+async function GetInfirmier(infirmierID) {
+  return await axios
+    .get(`${server_address}:${server_port}/api/infirmiers/${infirmierID}`)
+    .then((response) => response.data)
+    .catch((err) => {
+      console.error(err)
+    })
+}
 export default {
-    GetInfirmiers,
+  GetInfirmiers,
+  GetInfirmier,
 }

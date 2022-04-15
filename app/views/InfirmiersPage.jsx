@@ -6,6 +6,8 @@ import { DataTable } from 'react-native-paper'
 import { Picker } from '@react-native-picker/picker'
 import Datetime from 'react-datetime'
 import VaccinationAPI from '../model/VaccinationAPI'
+import TimePicker from '../component/TimePicker'
+import Loading from '../component/Loading'
 
 export default function InfirmiersPage({ navigation, route }) {
   const patient = route.params.Patient
@@ -14,9 +16,8 @@ export default function InfirmiersPage({ navigation, route }) {
   const [perPage, setPerPage] = React.useState(10)
   const [isLoading, setLoading] = React.useState(true)
   const [AllInfirmiers, setAllInfirmiers] = React.useState({})
-  const [NbrPage, setNbrPage] = React.useState(0)
   const [search, setSearch] = React.useState('')
-  const [day, setDay] = React.useState(new Date())
+  const [day, setDay] = React.useState()
   const [hour, setHour] = React.useState('0')
   const [minute, setMinute] = React.useState('0')
   const [vaccinType, setVaccinType] = React.useState('1')
@@ -27,17 +28,8 @@ export default function InfirmiersPage({ navigation, route }) {
     getInfirmiers()
   }, [])
 
-  useEffect(() => {
-    console.log(search)
-  }, [search])
-
-  const debug = async () => {
-    console.log('vaccinType')
-    console.log(vaccinType)
-  }
   const takeRDV = async (infirmierId) => {
     const formatedDate = `${day}T${hour}:${minute}`
-
     await VaccinationAPI.PostVaccination(
       `/api/vaccin_types/${vaccinType}`,
       `/api/patients/${patient.id}`,
@@ -61,7 +53,6 @@ export default function InfirmiersPage({ navigation, route }) {
               Recherche d'un rendez vous vaccin pour : {patient.nom}{' '}
               {patient.prenom}
             </Text>
-            <Button title="DEBUG" onPress={() => debug()} />
           </div>
           <div>
             <TextInput
@@ -102,7 +93,7 @@ export default function InfirmiersPage({ navigation, route }) {
                           <Picker.Item label="Astra Zeneca" value="3" />
                         </Picker>
                       </DataTable.Cell>
-                      <DataTable.Cell>
+                      <DataTable.Cell style={{ margin: 10 }}>
                         <Datetime
                           timeFormat={false}
                           onChange={(itemValue) =>
@@ -110,48 +101,17 @@ export default function InfirmiersPage({ navigation, route }) {
                           }
                           dateFormat={'DD MM YYYY'}
                         />
-                        <Picker
-                          ref={pickerRef}
-                          onValueChange={(itemValue) => setHour(itemValue)}
-                        >
-                          <Picker.Item label="00" value="0" />
-                          <Picker.Item label="01" value="1" />
-                          <Picker.Item label="02" value="2" />
-                          <Picker.Item label="03" value="3" />
-                          <Picker.Item label="04" value="4" />
-                          <Picker.Item label="05" value="5" />
-                          <Picker.Item label="06" value="6" />
-                          <Picker.Item label="07" value="7" />
-                          <Picker.Item label="08" value="8" />
-                          <Picker.Item label="09" value="9" />
-                          <Picker.Item label="10" value="10" />
-                          <Picker.Item label="11" value="11" />
-                          <Picker.Item label="12" value="12" />
-                          <Picker.Item label="13" value="13" />
-                          <Picker.Item label="14" value="14" />
-                          <Picker.Item label="15" value="15" />
-                          <Picker.Item label="16" value="16" />
-                          <Picker.Item label="17" value="17" />
-                          <Picker.Item label="18" value="18" />
-                          <Picker.Item label="19" value="19" />
-                          <Picker.Item label="20" value="20" />
-                          <Picker.Item label="21" value="21" />
-                          <Picker.Item label="22" value="22" />
-                          <Picker.Item label="23" value="23" />
-                        </Picker>
-                        H
-                        <Picker
-                          ref={pickerRef}
-                          onValueChange={(itemValue) => setMinute(itemValue)}
-                        >
-                          <Picker.Item label="00" value="00" />
-                          <Picker.Item label="15" value="15" />
-                          <Picker.Item label="30" value="30" />
-                          <Picker.Item label="45" value="45" />
-                        </Picker>
+                        <TimePicker
+                          day={day}
+                          setDay={setDay}
+                          hour={hour}
+                          setHour={setHour}
+                          minute={minute}
+                          setMinute={setMinute}
+                          creneauAttribue={OneInfirmier.creneauinfirmiers}
+                        />
                       </DataTable.Cell>
                       <DataTable.Cell>
-                        {' '}
                         <Button
                           title="Prendre RDV"
                           onPress={() => takeRDV(OneInfirmier.id)}
@@ -174,6 +134,7 @@ export default function InfirmiersPage({ navigation, route }) {
           </DataTable>
         </View>
       )}
+      {isLoading && <Loading />}
     </>
   )
 }

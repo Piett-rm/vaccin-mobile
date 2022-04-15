@@ -1,15 +1,12 @@
 import * as React from 'react'
-import { StyleSheet, Text, View, TextInput, Button } from 'react-native'
+import { StyleSheet, View, TextInput, Button } from 'react-native'
 import Patients from '../model/PatientAPI'
 import { useEffect } from 'react'
 import { DataTable } from 'react-native-paper'
-import { NavigationContainer } from '@react-navigation/native'
-import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import axios from 'axios'
+import Loading from '../component/Loading'
 
 export default function PatientsPage({ navigation }) {
-
-  //const optionsPerPage = [2, 3, 4, 5, 6]
   const [page, setPage] = React.useState(0)
   const [perPage, setPerPage] = React.useState(10)
   const [isLoading, setLoading] = React.useState(true)
@@ -18,7 +15,6 @@ export default function PatientsPage({ navigation }) {
   const [search, setSearch] = React.useState('')
   //au chargement de la page
   useEffect(() => {
-    console.log(axios.defaults.headers.common)
     getPatients()
   }, [])
 
@@ -26,18 +22,10 @@ export default function PatientsPage({ navigation }) {
     console.log(search)
   }, [search])
 
-
-
   const getPatients = async () => {
     const result = await Patients.GetPatients()
     await setAllPatients(result['hydra:member'])
     await setLoading(false)
-  }
-
-  const filtreTexte = (arr, requete) => {
-    return arr.filter(
-      (el) => el.toLowerCase().indexOf(requete.toLowerCase()) !== -1
-    )
   }
 
   return (
@@ -60,32 +48,35 @@ export default function PatientsPage({ navigation }) {
               <DataTable.Title>Rendez vous</DataTable.Title>
             </DataTable.Header>
 
-            {AllPatients.map(
-              (OnePatient) => (
-                <>
-                {(OnePatient.prenom.startsWith(search) || OnePatient.nom.startsWith(search) || OnePatient.numeroSecuriteSociale.toString().startsWith(search))  &&
-                <DataTable.Row key={OnePatient.id}>
-                  <DataTable.Cell>{OnePatient.nom}</DataTable.Cell>
-                  <DataTable.Cell>{OnePatient.prenom}</DataTable.Cell>
-                  <DataTable.Cell>
-                    {OnePatient.numeroSecuriteSociale}
-                  </DataTable.Cell>
-                  <DataTable.Cell>
-                    <Button
-                      title="Prendre rendez vous"
-                      onPress= {() => navigation.navigate("Infirmiers", {
-                        Patient: OnePatient,
-                      })}
-                    />
-                  </DataTable.Cell>
-                </DataTable.Row>}
-                </>
-              )
-            ).slice(page * perPage, page * perPage + perPage)}
+            {AllPatients.map((OnePatient) => (
+              <>
+                {(OnePatient.prenom.startsWith(search) ||
+                  OnePatient.nom.startsWith(search) ||
+                  OnePatient.numeroSecuriteSociale
+                    .toString()
+                    .startsWith(search)) && (
+                  <DataTable.Row key={OnePatient.id}>
+                    <DataTable.Cell>{OnePatient.nom}</DataTable.Cell>
+                    <DataTable.Cell>{OnePatient.prenom}</DataTable.Cell>
+                    <DataTable.Cell>
+                      {OnePatient.numeroSecuriteSociale}
+                    </DataTable.Cell>
+                    <DataTable.Cell>
+                      <Button
+                        title="Prendre rendez vous"
+                        onPress={() =>
+                          navigation.navigate('Infirmiers', {
+                            Patient: OnePatient,
+                          })
+                        }
+                      />
+                    </DataTable.Cell>
+                  </DataTable.Row>
+                )}
+              </>
+            )).slice(page * perPage, page * perPage + perPage)}
             <DataTable.Pagination
               page={page}
-              //
-              //numberOfRows={AllPatients.length}
               perPage={perPage}
               onPageChange={(page) => setPage(page)}
               label={page + 1}
@@ -95,6 +86,7 @@ export default function PatientsPage({ navigation }) {
           </DataTable>
         </View>
       )}
+      {isLoading && <Loading />}
     </>
   )
 }
