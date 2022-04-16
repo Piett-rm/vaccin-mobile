@@ -8,6 +8,7 @@ import Datetime from 'react-datetime'
 import VaccinationAPI from '../model/VaccinationAPI'
 import TimePicker from '../component/TimePicker'
 import Loading from '../component/Loading'
+import VaccinTypesAPI from '../model/VaccinTypesAPI'
 
 export default function InfirmiersPage({ navigation, route }) {
   const patient = route.params.Patient
@@ -15,18 +16,26 @@ export default function InfirmiersPage({ navigation, route }) {
   const [page, setPage] = React.useState(0)
   const [perPage, setPerPage] = React.useState(10)
   const [isLoading, setLoading] = React.useState(true)
-  const [AllInfirmiers, setAllInfirmiers] = React.useState({})
+  const [AllInfirmiers, setAllInfirmiers] = React.useState([])
   const [search, setSearch] = React.useState('')
   const [day, setDay] = React.useState()
   const [hour, setHour] = React.useState('0')
   const [minute, setMinute] = React.useState('0')
   const [vaccinType, setVaccinType] = React.useState('1')
+  const [allVaccinType, setAllVaccinType] = React.useState([])
 
   const pickerRef = React.useRef()
 
   useEffect(() => {
     getInfirmiers()
+    GetAllVaccinTypes()
   }, [])
+
+  useEffect(() => {
+    if (allVaccinType.length > 0 && AllInfirmiers.length > 0) {
+      setLoading(false)
+    }
+  }, [AllInfirmiers, allVaccinType])
 
   const takeRDV = async (infirmierId) => {
     const formatedDate = `${day}T${hour}:${minute}`
@@ -41,7 +50,15 @@ export default function InfirmiersPage({ navigation, route }) {
   const getInfirmiers = async () => {
     const result = await Infirmiers.GetInfirmiers()
     await setAllInfirmiers(result['hydra:member'])
-    await setLoading(false)
+  }
+  const GetAllVaccinTypes = async () => {
+    const result = await VaccinTypesAPI.GetVaccinTypes()
+    await setAllVaccinType(result)
+  }
+
+  const debug = () => {
+    console.log(vaccinType)
+    console.log(AllInfirmiers)
   }
 
   return (
@@ -53,6 +70,7 @@ export default function InfirmiersPage({ navigation, route }) {
               Recherche d'un rendez vous vaccin pour : {patient.nom}{' '}
               {patient.prenom}
             </Text>
+            <Button title="DEBUG" onPress={() => debug()} />
           </div>
           <div>
             <TextInput
@@ -88,9 +106,13 @@ export default function InfirmiersPage({ navigation, route }) {
                             setVaccinType(itemValue)
                           }
                         >
-                          <Picker.Item label="Pfizer" value="1" />
-                          <Picker.Item label="Moderna" value="2" />
-                          <Picker.Item label="Astra Zeneca" value="3" />
+                          {allVaccinType.map((vaccinType) => (
+                            <Picker.Item
+                              key={vaccinType.id}
+                              label={vaccinType.nom}
+                              value={vaccinType.id}
+                            />
+                          ))}
                         </Picker>
                       </DataTable.Cell>
                       <DataTable.Cell style={{ margin: 10 }}>
@@ -123,8 +145,6 @@ export default function InfirmiersPage({ navigation, route }) {
               ))}
             <DataTable.Pagination
               page={page}
-              //
-              //numberOfRows={AllPatients.length}
               perPage={perPage}
               onPageChange={(page) => setPage(page)}
               label={page + 1}

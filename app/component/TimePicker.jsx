@@ -64,7 +64,7 @@ export default function TimePicker({
     <>
       <Picker ref={pickerRef} onValueChange={(itemValue) => setHour(itemValue)}>
         {hoursAray.map((hour) => (
-          <Picker.Item label={hour} value={hour} />
+          <Picker.Item key={hour} label={hour} value={hour} />
         ))}
       </Picker>
       H
@@ -73,7 +73,7 @@ export default function TimePicker({
         onValueChange={(itemValue) => setMinute(itemValue)}
       >
         {valideMinutes().map((minute) => (
-          <Picker.Item label={minute} value={minute} />
+          <Picker.Item key={minute} label={minute} value={minute} />
         ))}
       </Picker>
     </>
