@@ -9,6 +9,7 @@ import VaccinationAPI from '../model/VaccinationAPI'
 import TimePicker from '../component/TimePicker'
 import Loading from '../component/Loading'
 import VaccinTypesAPI from '../model/VaccinTypesAPI'
+import Toast from 'react-native-toast-message'
 
 export default function InfirmiersPage({ navigation, route }) {
   const patient = route.params.Patient
@@ -26,6 +27,14 @@ export default function InfirmiersPage({ navigation, route }) {
 
   const pickerRef = React.useRef()
 
+  const showToast = (text1, text2, type) => {
+    Toast.show({
+      type,
+      text1,
+      text2,
+    })
+  }
+
   useEffect(() => {
     getInfirmiers()
     GetAllVaccinTypes()
@@ -39,12 +48,18 @@ export default function InfirmiersPage({ navigation, route }) {
 
   const takeRDV = async (infirmierId) => {
     const formatedDate = `${day}T${hour}:${minute}`
-    await VaccinationAPI.PostVaccination(
+    const rdv = await VaccinationAPI.PostVaccination(
       `/api/vaccin_types/${vaccinType}`,
       `/api/patients/${patient.id}`,
       `/api/infirmiers/${infirmierId}`,
       formatedDate
-    )
+    ).then((data) => {
+      if (data.status === 201) {
+        showToast('Succès', 'Rendez-vous ajouté', 'success')
+      } else {
+        showToast('Erreur', "Le rendez-vous n'est pas pris en compte", 'error')
+      }
+    })
   }
 
   const getInfirmiers = async () => {

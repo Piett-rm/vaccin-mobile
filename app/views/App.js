@@ -8,6 +8,7 @@ import {
   Button,
   TouchableOpacity,
 } from 'react-native'
+import Toast from 'react-native-toast-message'
 import { NavigationContainer } from '@react-navigation/native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { StatusBar } from 'expo-status-bar'
@@ -29,7 +30,16 @@ const App = () => {
         navigation.navigate('Login')
       }
       //si il y a changement dans jwt
+      showToast('Succès', 'Connexion réussie')
     }, [jwt])
+
+    const showToast = (text1, text2) => {
+      Toast.show({
+        type: 'success',
+        text1,
+        text2,
+      })
+    }
 
     return (
       <View style={stylesHomePage.container}>
@@ -70,7 +80,7 @@ const App = () => {
   const LoginPage = ({ navigation }) => {
     const [email, setEmail] = React.useState('')
     const [password, setPassword] = React.useState('')
-    console.log(axios.defaults.headers.common)
+
     const login = () => {
       try {
         return authAPI
@@ -79,10 +89,8 @@ const App = () => {
             password: password,
           })
           .then((result) => setJwt(result))
-          .then(console.log('test'))
-          .then((result) => console.log(result))
       } catch (error) {
-        // Error 😨
+        showToast('Erreur', 'Une erreur est survenue')
         if (error.response) {
           /*
            * The request was made and the server responded with a
@@ -183,27 +191,30 @@ const App = () => {
     )
   }
   return (
-    <NavigationContainer>
-      <Stack.Navigator>
-        {!jwt && <Stack.Screen name="Login" component={LoginPage} />}
-        <Stack.Screen
-          name="Home"
-          component={HomeScreen}
-          options={{
-            title: 'My home',
-            headerStyle: {
-              backgroundColor: '#f4511e',
-            },
-            headerTintColor: '#fff',
-            headerTitleStyle: {
-              fontWeight: 'bold',
-            },
-          }}
-        />
-        <Stack.Screen name="Patients" component={PatientsPage} />
-        <Stack.Screen name="Infirmiers" component={InfirmiersPage} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <>
+      <NavigationContainer>
+        <Stack.Navigator>
+          {!jwt && <Stack.Screen name="Login" component={LoginPage} />}
+          <Stack.Screen
+            name="Home"
+            component={HomeScreen}
+            options={{
+              title: 'My home',
+              headerStyle: {
+                backgroundColor: '#f4511e',
+              },
+              headerTintColor: '#fff',
+              headerTitleStyle: {
+                fontWeight: 'bold',
+              },
+            }}
+          />
+          <Stack.Screen name="Patients" component={PatientsPage} />
+          <Stack.Screen name="Infirmiers" component={InfirmiersPage} />
+        </Stack.Navigator>
+      </NavigationContainer>
+      <Toast />
+    </>
   )
 }
 export default App

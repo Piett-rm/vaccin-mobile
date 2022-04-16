@@ -9,15 +9,15 @@ async function PostVaccination(
   dateVaccination
 ) {
   //on commence par créer un vaccin et grâce à son id on ajoute la vaccination
-  VaccinAPI.PostVaccin(vaccinType).then((vaccinId) => {
-    axios
+  return VaccinAPI.PostVaccin(vaccinType).then((vaccinId) => {
+    return axios
       .post(`${server_address}:${server_port}/api/vaccinations`, {
         vaccin: `/api/vaccins/${vaccinId}`,
         patient,
         infirmier,
         dateVaccination,
       })
-      .then((response) => response.data)
+      .then((response) => response)
       .catch((err) => {
         console.error(err)
       })
