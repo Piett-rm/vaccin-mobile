@@ -53,13 +53,20 @@ export default function InfirmiersPage({ navigation, route }) {
       `/api/patients/${patient.id}`,
       `/api/infirmiers/${infirmierId}`,
       formatedDate
-    ).then((data) => {
-      if (data.status === 201) {
-        showToast('Succès', 'Rendez-vous ajouté', 'success')
-      } else {
-        showToast('Erreur', "Le rendez-vous n'est pas pris en compte", 'error')
-      }
-    })
+    )
+      .then((data) => {
+        if (data.status === 201) {
+          showToast('Succès', 'Rendez-vous ajouté', 'success')
+          
+        } else {
+          showToast(
+            'Erreur',
+            "Le rendez-vous n'est pas pris en compte",
+            'error'
+          )
+        }
+      })
+      .then(() => navigation.navigate('Home'))
   }
 
   const getInfirmiers = async () => {
