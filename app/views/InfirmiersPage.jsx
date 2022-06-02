@@ -92,7 +92,7 @@ export default function InfirmiersPage({ navigation, route }) {
               Recherche d'un rendez vous vaccin pour : {patient.nom}{' '}
               {patient.prenom}
             </Text>
-            <Button title="DEBUG" onPress={() => debug()} />
+            {/* <Button title="DEBUG" onPress={() => debug()} /> */}
           </div>
           <div>
             <TextInput

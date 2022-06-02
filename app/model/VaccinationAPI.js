@@ -22,6 +22,7 @@ async function PostVaccination(
         console.error(err)
       })
   })
+
 }
 export default {
   PostVaccination,

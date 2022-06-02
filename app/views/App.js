@@ -22,18 +22,23 @@ import VaccinationAPI from '../model/VaccinationAPI'
 import axios from 'axios'
 import VaccinTypesAPI from '../model/VaccinTypesAPI'
 import Loading from '../component/Loading'
+import NbrVaccination from '../model/NbrVaccination'
+import ListeInfirmiersPage from './ListeInfirmiersPage'
+import ListeCreneaux from './ListeCreneaux'
 
 const Stack = createNativeStackNavigator()
 
 const App = () => {
   // const [jwt, setJwt] = React.useState(null)
   const [jwt, setJwt] = React.useState(
-    'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE2NTAzNzkzNzcsImV4cCI6MTY1MDM4Mjk3Nywicm9sZXMiOlsiUk9MRV9VU0VSIl0sInVzZXJuYW1lIjoibWFydGluZTM5QGF1Z2VyLmNvbSJ9.Vx6JYUHV1jsDbX8kKcr1Ai6_vH6TE_u8ZtFqc-fkHha6oVfszF_Lv8-MQMuMbCUbfCd76fpw6F_oDs-oQE_ByjC_5aqdUYfIcr83uz9F2KSsI2g8la6Dyg3_Bg0rvluTcFGKKcA78ebIr-mOTK9RIpuj0y46iddSUFbVBndYV4pC_F6tWRqhD79S6gaPwL7HOkQ2j87qmYJIvKoiVhInhCJ7N2yAK57awjqyKqu6eeqNa5yA5eW1oUofz-M-40qt6-uyJSn1LSqRaQVT1Vj5-yof8Vn0ivGSKR-9x6ANa_mzSqspXowN2lhNcXn8ATK1Lvib-oN1zwXcDiHnF3j6c3KjLhjogaFQm9ySCVoBevHB7_y0_WfG2oVkUUKeMwHLVz_weSyvd4LzYdGVEnIaVeP52hrlFHL5W5inCxFUnzcW5muQs35HowRJLQF195eL4kd9HXbqxQ81GY8MmmOwQjKzZNi2BdWF9xAwxkr_7XFYBgsnDkGsHgW_8LGwdSGozchGc4ersVI4c_h6vM4Q5_Loqwgva7nAwakSq5kIAj5-2wUbDuoxWEqpp4gnYuDp6_jd3FjiRdgh5Yo1RkNwMx7it4bC93RiNbliBrqbV2TBoDW67XcGT1taxZjuwNUivxASoy3k4hX6RG4fsx06k8mys6ipJl4TPmiEVxj5rFU'
+    'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE2NTQwMDEwMzMsImV4cCI6MTY1NDAwNDYzMywicm9sZXMiOlsiUk9MRV9VU0VSIl0sInVzZXJuYW1lIjoibWFydGluZTM5QGF1Z2VyLmNvbSJ9.qCpH-bDFPRXPKnX8P-UZF2kTbKmdmMxJ6wILMDggj9Y6FXi2DKRRJiU6B3pYb8G7FKo8QFLACoAQulPQvGWt5DuJCgS0Upvz4xkD8zm77vOa4MH99X4Semt83ujhex2P-AWNFW-DVW3yUlC9qYP0sLtAlt8XOzw5i6NCICCCad_IO5jryIZpHa833bqTbs52xH1hJ9w7TH9C3MhFjZI4U5XX0aRHX1P7SOeGX53Hw1kaca2kapnyTyFgM6u72gz_1u3F2gfrHo_ntD2lpEKoJI4VO0YLQBjjz9PPFMdYMQ6DfZ0EPEGtrezge_tfBL3BL9ERams0iKg_js54uXcwbKYdlk5z0qw9jEzbYPNkwpadIZ6H3hJLwUuTiMNges2nkzTrpK5OMopLo8Lo3lweHbn9thlPBBzo27yXiyZqwD65A9L6tvy8UD9_XaK5JTyulUSDo_BK8Jy5iuFlasV8obxOX6stsUFujlCSsxV4oNFn1Dd2198RMxYLaQDZT7mRtnh5MvzUr1VyjtRVLlIRUQpH2x0NYaXhx5vgOyf7szfmkym8irbSYVjqAC0oH1Hcz3_uyzZiJTUlwePPQCynsSTwlpHYVehWyJoRxb7oQYq42XwC6qZ5llc5CeSn_Rn-NmjJda_x0l8K0j5BTRG7plEM4WtzRY1UxpTV9TvJNNY'
   )
 
   function HomeScreen({ navigation }) {
     const [isLoading, setLoading] = React.useState(true)
     const [vaccinType, setVaccinType] = React.useState()
+    const  [nbrVaccination, setNbrVaccination] = React.useState()
+    const [isLoadingNbrVaccin, setisLoadingNbrVaccin] = React.useState(true)
 
     useEffect(() => {
       axios.defaults.headers.common['Authorization'] = 'Bearer ' + jwt
@@ -58,6 +63,12 @@ const App = () => {
       setVaccinType(result)
     }
 
+    const getNbrVaccin = async () => {
+      const result = await NbrVaccination.GetNbrVaccination() 
+      setNbrVaccination(result)
+      
+    }
+
     useEffect(() => {
       if (vaccinType != undefined) {
         setLoading(false)
@@ -65,58 +76,83 @@ const App = () => {
     }, [vaccinType])
 
     useEffect(() => {
+      if (nbrVaccination != undefined) {
+        setisLoadingNbrVaccin(false)
+        console.log(nbrVaccination)
+      }
+    }, [nbrVaccination])
+
+    useEffect(() => {
       if (isLoading) {
         if (jwt) {
           setInterval(() => getVaccinType(), 10000)
+          setInterval(() => getNbrVaccin(), 10000) 
         }
+        
       }
       console.log(vaccinType)
     })
 
     return (
-      <View style={stylesHomePage.container}>
-        <View style={stylesHomePage.header}>
-          <View style={stylesHomePage.title}>
-            <Text style={stylesHomePage.textTitle}>Gestion des vaccins</Text>
+      <>
+        <View style={stylesHomePage.container}>
+          <View style={stylesHomePage.header}>
+            <View style={stylesHomePage.title}>
+              <Text style={stylesHomePage.textTitle}>Gestion des vaccins</Text>
+            </View>
+            <View style={stylesHomePage.deconnexion}>
+              <Button
+                style={stylesHomePage.buttonDeconnexion}
+                title="Deconnexion"
+                onPress={() => setJwt(null)}
+              />
+            </View>
           </View>
-          <View style={stylesHomePage.deconnexion}>
-            <Button
-              style={stylesHomePage.buttonDeconnexion}
-              title="Deconnexion"
-              onPress={() => setJwt(null)}
-            />
+          <View style={stylesHomePage.body}>
+            <View style={stylesHomePage.line}>
+              {!isLoading && (
+                <>
+                  {vaccinType.map((vaccinType) => (
+                    <View key={vaccinType.id} style={stylesHomePage.bodyCase}>
+                      <Text style={stylesHomePage.vaccinStock}>
+                        {vaccinType.stock}
+                      </Text>
+                      <Text style={stylesHomePage.vaccinNom}>
+                        {vaccinType.nom}
+                      </Text>
+                    </View>
+                  ))}
+                </>
+              )}
+              {isLoading && <Text>Loading</Text>}
+            </View>
           </View>
+          <View style={stylesHomePage.text}>
+            <View style={stylesHomePage.buttonReservation}>
+              <Button
+                style={stylesHomePage.buttonForReservation}
+                title="Reservation vaccin"
+                onPress={() => navigation.navigate('Patients')}
+              />
+            </View>
+          </View>
+          <View style={stylesHomePage.text}>
+            <View style={stylesHomePage.buttonReservation}>
+              <Button
+                style={stylesHomePage.buttonForReservation}
+                title="Infirmiers"
+                onPress={() => navigation.navigate('ListeInfirmiers')}
+              />
+            </View>
+          </View>
+          <View></View>
+          {! isLoadingNbrVaccin &&
+          <View>
+            <Text>Nombre de vaccination aujourd'hui : {nbrVaccination['hydra:totalItems']}</Text>
+          </View>
+          }
         </View>
-        <View style={stylesHomePage.body}>
-          <View style={stylesHomePage.line}>
-            {!isLoading && (
-              <>
-                {vaccinType.map((vaccinType) => (
-                  <View key={vaccinType.id} style={stylesHomePage.bodyCase}>
-                    <Text style={stylesHomePage.vaccinStock}>
-                      {vaccinType.stock}
-                    </Text>
-                    <Text style={stylesHomePage.vaccinNom}>
-                      {vaccinType.nom}
-                    </Text>
-                  </View>
-                ))}
-              </>
-            )}
-            {isLoading && <Text>Loading</Text>}
-          </View>
-        </View>
-        <View style={stylesHomePage.text}>
-          <View style={stylesHomePage.buttonReservation}>
-            <Button style={stylesHomePage.buttonForReservation}
-              title="Reservation vaccin"
-              onPress={() => navigation.navigate('Patients')}
-            />
-          </View>
-          
-        </View>
-        <View></View>
-      </View>
+      </>
     )
   }
 
@@ -174,7 +210,6 @@ const App = () => {
     buttonReservation: {
       flex: 5,
       alignItems: 'center',
-
     },
   })
 
@@ -312,6 +347,8 @@ const App = () => {
           />
           <Stack.Screen name="Patients" component={PatientsPage} />
           <Stack.Screen name="Infirmiers" component={InfirmiersPage} />
+          <Stack.Screen name="ListeInfirmiers" component={ListeInfirmiersPage} />
+          <Stack.Screen name="ListeCreneaux" component={ListeCreneaux} />
         </Stack.Navigator>
       </NavigationContainer>
       <Toast />
