@@ -28,12 +28,13 @@ const Stack = createNativeStackNavigator()
 const App = () => {
   // const [jwt, setJwt] = React.useState(null)
   const [jwt, setJwt] = React.useState(
-    'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE2NTAzNzkzNzcsImV4cCI6MTY1MDM4Mjk3Nywicm9sZXMiOlsiUk9MRV9VU0VSIl0sInVzZXJuYW1lIjoibWFydGluZTM5QGF1Z2VyLmNvbSJ9.Vx6JYUHV1jsDbX8kKcr1Ai6_vH6TE_u8ZtFqc-fkHha6oVfszF_Lv8-MQMuMbCUbfCd76fpw6F_oDs-oQE_ByjC_5aqdUYfIcr83uz9F2KSsI2g8la6Dyg3_Bg0rvluTcFGKKcA78ebIr-mOTK9RIpuj0y46iddSUFbVBndYV4pC_F6tWRqhD79S6gaPwL7HOkQ2j87qmYJIvKoiVhInhCJ7N2yAK57awjqyKqu6eeqNa5yA5eW1oUofz-M-40qt6-uyJSn1LSqRaQVT1Vj5-yof8Vn0ivGSKR-9x6ANa_mzSqspXowN2lhNcXn8ATK1Lvib-oN1zwXcDiHnF3j6c3KjLhjogaFQm9ySCVoBevHB7_y0_WfG2oVkUUKeMwHLVz_weSyvd4LzYdGVEnIaVeP52hrlFHL5W5inCxFUnzcW5muQs35HowRJLQF195eL4kd9HXbqxQ81GY8MmmOwQjKzZNi2BdWF9xAwxkr_7XFYBgsnDkGsHgW_8LGwdSGozchGc4ersVI4c_h6vM4Q5_Loqwgva7nAwakSq5kIAj5-2wUbDuoxWEqpp4gnYuDp6_jd3FjiRdgh5Yo1RkNwMx7it4bC93RiNbliBrqbV2TBoDW67XcGT1taxZjuwNUivxASoy3k4hX6RG4fsx06k8mys6ipJl4TPmiEVxj5rFU'
+    'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE2NTQyMDEwOTEsImV4cCI6MTY1NDIwNDY5MSwicm9sZXMiOlsiUk9MRV9VU0VSIl0sInVzZXJuYW1lIjoibWFydGluZTM5QGF1Z2VyLmNvbSJ9.tBrY2mJGTW863OpHl5MZTt4xBf10z3EGI21mW4hKPQUYFn913MCcH1IRqZ3jwgUGhGro5D1EoqbfK2Z5RUviGJ00IulOup5qvcJkvqzk-jP3RQDG0gaqPY57KdZsvzXVGoblXxArhxRpk596I2yBnJ3rMMrnwLymGIxIO67ZVJkwFF0sPR5SEDgVZbv4C1qRkamoe4vkN0lqDCEF-KzqRdleLjE_ZTNVBhFr29OjyF5N1KATHJ4o1VZ-FA68kPH3G91TohVNUVUm8M2rRlp5FBDZuYbNJvOqDJ0CD389KlyNpcqHRnX-LeBaB0xS6xvXNf8YptS_y0m9ZtL_oSKB12-24m7hVZJP3kmwjocFL9QZwhsxAF_PZ7rTHKTlPHw2zkMIeFZNQbUZ_PyoJ9baTscjiugPyjdwA30wdSmCQb_wzrwi8t61vazPfevgyarUW4FExqzZT_6kl4vXsRDsfepSkblpQnP6z4C6mKMfa4t-073AKsYuQ5ObpZV-9kdf4LC_POlR9vprahJr1-UU-90zewmnijwxQH4X3zxUjCMqCefJYFshk-Z3eExi-Dsyn1YDRA5fU-s5Bgml4fmllju5FLoNCshDVzLys9GN2_YXi-aahOfvaw62XYIh7gbzo7JB0E1_0RwQoGp_iTxYHOZvYN1VjrhNSm1JEnaR8Uk'
   )
 
   function HomeScreen({ navigation }) {
     const [isLoading, setLoading] = React.useState(true)
     const [vaccinType, setVaccinType] = React.useState()
+    const [test, setTest] = React.useState('test')
 
     useEffect(() => {
       axios.defaults.headers.common['Authorization'] = 'Bearer ' + jwt
@@ -58,11 +59,24 @@ const App = () => {
       setVaccinType(result)
     }
 
+    const getVaccinAuj = async () => {
+      const result = await VaccinationAPI.VaccinationAuj()
+      console.log(VaccinationAPI.VaccinationAuj())
+      setTest(result)
+    }
+
     useEffect(() => {
       if (vaccinType != undefined) {
         setLoading(false)
       }
     }, [vaccinType])
+
+    useEffect(() => {
+      
+      if (test != undefined) {
+        console.log(test)
+      }
+    }, [test])
 
     useEffect(() => {
       if (isLoading) {
@@ -84,6 +98,11 @@ const App = () => {
               style={stylesHomePage.buttonDeconnexion}
               title="Deconnexion"
               onPress={() => setJwt(null)}
+            />
+            <Button
+              style={stylesHomePage.buttonDeconnexion}
+              title="debug"
+              onPress={() => getVaccinAuj()}
             />
           </View>
         </View>

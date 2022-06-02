@@ -23,6 +23,25 @@ async function PostVaccination(
       })
   })
 }
+
+async function VaccinationAuj() {
+  const vaccinAuj = await axios
+    .get(`${server_address}:${server_port}/api/vaccinations`)
+    .then((response) => response.data["hydra:member"])
+  
+  const listVaccinAuj = []
+  vaccinAuj.forEach((vaccin) => {
+    const vaccinDate = Date.parse(vaccin.date_vaccination)
+    if(vaccinDate === Date.now()){
+      listVaccinAuj.push(vaccin)
+    }
+  });
+  console.log("Auj")
+  console.log()
+
+  return listVaccinAuj
+}
 export default {
   PostVaccination,
+  VaccinationAuj,
 }
