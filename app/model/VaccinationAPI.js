@@ -32,12 +32,13 @@ async function VaccinationAuj() {
   const listVaccinAuj = []
   vaccinAuj.forEach((vaccin) => {
     const vaccinDate = Date.parse(vaccin.date_vaccination)
-    if(vaccinDate === Date.now()){
+    const date = new Date(vaccinDate)
+    const dateAuj = Date.now()
+    const dateAujObj = new Date(dateAuj)
+    if(date.toLocaleDateString("fr") ===dateAujObj.toLocaleDateString("fr") ){
       listVaccinAuj.push(vaccin)
     }
   });
-  console.log("Auj")
-  console.log()
 
   return listVaccinAuj
 }
